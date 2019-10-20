@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { Form, Input, message, Button, Table, Divider, Popconfirm } from 'antd'
-import { getAllLevel, createNewLevel, deleteLevel } from '../../../api/level.api'
+import { getAllIngredients, createNewIngredients, deleteIngredients } from '../../../api/ingredients.api'
 
-const LevelForm = (props) => {
+
+const IngredientsForm = (props) => {
 
     const { getFieldDecorator } = props.form
-    const [levelData, setLevelData] = useState([])
+    const [ingredientsData, setIngredientsData] = useState([])
 
     useEffect(() => {
-        getLevelData()
+        getIngredientsData()
     }, [])
 
     const columns = [
@@ -23,14 +24,14 @@ const LevelForm = (props) => {
             key: 'title',
         },
         {
-            title: 'Image',
-            dataIndex: 'image',
-            key: 'image'
+            title: 'Price',
+            dataIndex: 'price',
+            key: 'price'
         },
         {
-            title: 'Description',
-            dataIndex: 'description',
-            key: 'description'
+            title: 'unit',
+            dataIndex: 'unit',
+            key: 'unit'
         },
         {
             title: 'Action',
@@ -47,19 +48,19 @@ const LevelForm = (props) => {
         },
     ]
 
-    const getLevelData = async () => {
+    const getIngredientsData = async () => {
         try {
-            const data = await getAllLevel()
-            return setLevelData(data)
+            const data = await getAllIngredients();
+            return setIngredientsData(data)
         } catch (err) {
             console.log(err)
         }
     }
 
     const deleteItem = id => {
-        deleteLevel(id).then(data => {
+        deleteIngredients(id).then(data => {
             if (data.status === 0) {
-                getLevelData()
+                getIngredientsData()
             }
             else message.error(data.message)
         })
@@ -69,12 +70,12 @@ const LevelForm = (props) => {
         e.preventDefault();
         props.form.validateFields((err, values) => {
             if (!err) {
-                createNewLevel(values)
+                createNewIngredients(values)
                     .then(data => {
                         console.log(data)
                         if (data.status === 0) {
                             message.success(data.message)
-                            getLevelData()
+                            getIngredientsData()
                         } else message.error(data.message)
                     })
                     .catch(err => {
@@ -102,25 +103,25 @@ const LevelForm = (props) => {
                             </Form.Item>
                         </div>
                         <div className="col-sm-6">
-                            <Form.Item label="Image">
-                                {getFieldDecorator('image', {
-                                    rules: [{ required: true, message: 'Please input image!' }],
+                            <Form.Item label="Price">
+                                {getFieldDecorator('price', {
+                                    rules: [{ required: true, message: 'Please input price!' }],
                                 })(
                                     <Input
                                         size="large"
-                                        placeholder="image"
+                                        placeholder="Price"
                                     />,
                                 )}
                             </Form.Item>
                         </div>
                         <div className="col-sm-6">
-                            <Form.Item label="Description">
-                                {getFieldDecorator('description', {
-                                    rules: [{ required: true, message: 'Please input description!' }],
+                            <Form.Item label="Unit">
+                                {getFieldDecorator('unit', {
+                                    rules: [{ required: true, message: 'Please input unit!' }],
                                 })(
                                     <Input
                                         size="large"
-                                        placeholder="Description"
+                                        placeholder="Unit"
                                     />,
                                 )}
                             </Form.Item>
@@ -137,7 +138,7 @@ const LevelForm = (props) => {
 
                 <div className="row">
                     <div className="col-sm">
-                        {levelData && <Table dataSource={levelData} columns={columns} />}
+                        {ingredientsData && <Table dataSource={ingredientsData} columns={columns} />}
                     </div>
                 </div>
 
@@ -146,6 +147,6 @@ const LevelForm = (props) => {
     )
 }
 
-const LevelPage = Form.create({ name: 'Level_form' })(LevelForm);
+const IngredientsPage = Form.create({ name: 'ingredients_form' })(IngredientsForm);
 
-export default LevelPage
+export default IngredientsPage

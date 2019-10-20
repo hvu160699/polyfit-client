@@ -18,6 +18,18 @@ const Header = () => {
                 <li className="nav-item">
                     <Link className="nav-link" to={path.bodyparts}>Bodyparts</Link>
                 </li>
+                <li className="nav-item">
+                    <Link className="nav-link" to={path.diets}>Diets</Link>
+                </li>
+                <li className="nav-item">
+                    <Link className="nav-link" to={path.meals}>Meals</Link>
+                </li>
+                <li className="nav-item">
+                    <Link className="nav-link" to={path.dishes}>Dishes</Link>
+                </li>
+                <li className="nav-item">
+                    <Link className="nav-link" to={path.ingredients}>Ingredients</Link>
+                </li>
             </ul>
 
         </div>

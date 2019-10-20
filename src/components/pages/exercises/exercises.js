@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Form, Input, Button, Select, Table, Icon } from 'antd'
+import { Form, Input, Button, Select, Table, Icon, Divider, Popconfirm, message, InputNumber } from 'antd'
 import { getAllLevel } from '../../../api/level.api';
-import { getAllExercises } from '../../../api/exercises.api';
+import { getAllExercises, deleteExercises, createNewExercises } from '../../../api/exercises.api';
 const { Option } = Select;
 
 const ExercisesForm = (props) => {
@@ -36,7 +36,21 @@ const ExercisesForm = (props) => {
         }
     }
 
+    const deleteItem = id => {
+        deleteExercises(id).then(data => {
+            if (data.status === 0) {
+                getExercisesData()
+            }
+            else message.error(data.message)
+        })
+    }
+
     const columns = [
+        {
+            title: 'ID',
+            dataIndex: 'id',
+            key: 'id',
+        },
         {
             title: 'Title',
             dataIndex: 'title',
@@ -46,7 +60,6 @@ const ExercisesForm = (props) => {
             title: 'Introduction',
             dataIndex: 'introduction',
             key: 'introduction',
-            width: 150
         },
         {
             title: 'Content',
@@ -77,7 +90,7 @@ const ExercisesForm = (props) => {
             title: 'Image url',
             dataIndex: 'image_url',
             key: 'image_url',
-            width: 300
+            ellipsis: true,
         },
         {
             title: 'ID Level',
@@ -85,26 +98,37 @@ const ExercisesForm = (props) => {
             key: 'id_level',
         },
         {
-            title: 'Edit',
-            dataIndex: 'edit',
-            key: 'edit',
-            fixed: 'right',
-            width: 100,
-            render: () => <Icon type="edit" />
-
+            title: 'Action',
+            key: 'action',
+            render: (row) => (
+                <span>
+                    <a>Edit</a>
+                    <Divider type="vertical" />
+                    <Popconfirm title="Sure to delete?" onConfirm={() => deleteItem(row.id)}>
+                        <a>Delete</a>
+                    </Popconfirm>
+                </span>
+            ),
         },
-        {
-            title: 'Delete',
-            dataIndex: 'delete',
-            key: 'delete',
-            fixed: 'right',
-            width: 100,
-            render: () => <Icon type="delete" />
-        }
     ];
 
-    const handleSubmit = () => {
-
+    const handleSubmit = e => {
+        e.preventDefault();
+        props.form.validateFields((err, values) => {
+            if (!err) {
+                createNewExercises(values)
+                    .then(data => {
+                        console.log(data)
+                        if (data.status === 0) {
+                            message.success(data.message)
+                            getExercisesData()
+                        } else message.error(data.message)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    });
+            }
+        });
     }
 
     return (
@@ -165,7 +189,7 @@ const ExercisesForm = (props) => {
                                 {getFieldDecorator('sets', {
                                     // rules: [{ required: true, message: 'Please input your Password!' }],
                                 })(
-                                    <Input
+                                    <InputNumber
                                         size="large"
                                         placeholder="Sets"
                                     />,
@@ -177,7 +201,7 @@ const ExercisesForm = (props) => {
                                 {getFieldDecorator('reps', {
                                     // rules: [{ required: true, message: 'Please input your Password!' }],
                                 })(
-                                    <Input
+                                    <InputNumber
                                         size="large"
                                         placeholder="Reps"
                                     />,
@@ -189,7 +213,7 @@ const ExercisesForm = (props) => {
                                 {getFieldDecorator('rest', {
                                     // rules: [{ required: true, message: 'Please input your Password!' }],
                                 })(
-                                    <Input
+                                    <InputNumber
                                         size="large"
                                         placeholder="Rest"
                                     />,
@@ -234,6 +258,8 @@ const ExercisesForm = (props) => {
                                 )}
                             </Form.Item>
                         </div>
+                    </div>
+                    <div className="row">
                         <div className="col-sm">
                             <Button type="primary" htmlType="submit" className="login-form-button">
                                 Submit
@@ -244,7 +270,7 @@ const ExercisesForm = (props) => {
 
                 <div className="row">
                     <div className="col-sm">
-                        {exerData && <Table dataSource={exerData} columns={columns} scroll={{ x: 1300 }} />}
+                        {exerData && <Table dataSource={exerData} columns={columns} />}
                     </div>
                 </div>
             </div>
@@ -252,6 +278,6 @@ const ExercisesForm = (props) => {
     )
 }
 
-const Exercises = Form.create({ name: 'exercises_form' })(ExercisesForm);
+const ExercisesPage = Form.create({ name: 'exercises_form' })(ExercisesForm);
 
-export default Exercises
+export default ExercisesPage

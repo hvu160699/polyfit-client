@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { Form, Input, message, Button, Table, Divider, Popconfirm } from 'antd'
-import { getAllLevel, createNewLevel, deleteLevel } from '../../../api/level.api'
+import { getAllBodyparts, deleteBodyparts, createNewBodyparts } from '../../../api/bodyparts.api'
 
-const LevelForm = (props) => {
+
+const BodypartsForm = (props) => {
 
     const { getFieldDecorator } = props.form
-    const [levelData, setLevelData] = useState([])
+    const [bodypartsData, setBodypartsData] = useState([])
 
     useEffect(() => {
-        getLevelData()
+        getBodypartsData()
     }, [])
 
     const columns = [
@@ -23,14 +24,9 @@ const LevelForm = (props) => {
             key: 'title',
         },
         {
-            title: 'Image',
-            dataIndex: 'image',
-            key: 'image'
-        },
-        {
-            title: 'Description',
-            dataIndex: 'description',
-            key: 'description'
+            title: 'Image url',
+            dataIndex: 'image_url',
+            key: 'image_url'
         },
         {
             title: 'Action',
@@ -47,19 +43,19 @@ const LevelForm = (props) => {
         },
     ]
 
-    const getLevelData = async () => {
+    const getBodypartsData = async () => {
         try {
-            const data = await getAllLevel()
-            return setLevelData(data)
+            const data = await getAllBodyparts();
+            return setBodypartsData(data)
         } catch (err) {
             console.log(err)
         }
     }
 
     const deleteItem = id => {
-        deleteLevel(id).then(data => {
+        deleteBodyparts(id).then(data => {
             if (data.status === 0) {
-                getLevelData()
+                getBodypartsData()
             }
             else message.error(data.message)
         })
@@ -69,12 +65,12 @@ const LevelForm = (props) => {
         e.preventDefault();
         props.form.validateFields((err, values) => {
             if (!err) {
-                createNewLevel(values)
+                createNewBodyparts(values)
                     .then(data => {
                         console.log(data)
                         if (data.status === 0) {
                             message.success(data.message)
-                            getLevelData()
+                            getBodypartsData()
                         } else message.error(data.message)
                     })
                     .catch(err => {
@@ -102,25 +98,13 @@ const LevelForm = (props) => {
                             </Form.Item>
                         </div>
                         <div className="col-sm-6">
-                            <Form.Item label="Image">
-                                {getFieldDecorator('image', {
-                                    rules: [{ required: true, message: 'Please input image!' }],
+                            <Form.Item label="Image url">
+                                {getFieldDecorator('image_url', {
+                                    rules: [{ required: true, message: 'Please input image url!' }],
                                 })(
                                     <Input
                                         size="large"
-                                        placeholder="image"
-                                    />,
-                                )}
-                            </Form.Item>
-                        </div>
-                        <div className="col-sm-6">
-                            <Form.Item label="Description">
-                                {getFieldDecorator('description', {
-                                    rules: [{ required: true, message: 'Please input description!' }],
-                                })(
-                                    <Input
-                                        size="large"
-                                        placeholder="Description"
+                                        placeholder="Image url"
                                     />,
                                 )}
                             </Form.Item>
@@ -137,7 +121,7 @@ const LevelForm = (props) => {
 
                 <div className="row">
                     <div className="col-sm">
-                        {levelData && <Table dataSource={levelData} columns={columns} />}
+                        {bodypartsData && <Table dataSource={bodypartsData} columns={columns} />}
                     </div>
                 </div>
 
@@ -146,6 +130,6 @@ const LevelForm = (props) => {
     )
 }
 
-const LevelPage = Form.create({ name: 'Level_form' })(LevelForm);
+const BodypartsPage = Form.create({ name: 'bodyparts_form' })(BodypartsForm);
 
-export default LevelPage
+export default BodypartsPage

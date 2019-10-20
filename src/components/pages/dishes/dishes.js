@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { Form, Input, message, Button, Table, Divider, Popconfirm } from 'antd'
-import { getAllLevel, createNewLevel, deleteLevel } from '../../../api/level.api'
+import { getAllDishes, createNewDishes, deleteDishes } from '../../../api/dishes.api'
 
-const LevelForm = (props) => {
+
+const DishesForm = (props) => {
 
     const { getFieldDecorator } = props.form
-    const [levelData, setLevelData] = useState([])
+    const [dishesData, setDishesData] = useState([])
 
     useEffect(() => {
-        getLevelData()
+        getDishesData()
     }, [])
 
     const columns = [
@@ -23,14 +24,24 @@ const LevelForm = (props) => {
             key: 'title',
         },
         {
-            title: 'Image',
-            dataIndex: 'image',
-            key: 'image'
+            title: 'Image url',
+            dataIndex: 'image_url',
+            key: 'image_url'
         },
         {
-            title: 'Description',
-            dataIndex: 'description',
-            key: 'description'
+            title: 'Protein',
+            dataIndex: 'protein',
+            key: 'protein'
+        },
+        {
+            title: 'Carb',
+            dataIndex: 'carb',
+            key: 'carb'
+        },
+        {
+            title: 'Calories',
+            dataIndex: 'calories',
+            key: 'calories'
         },
         {
             title: 'Action',
@@ -47,19 +58,19 @@ const LevelForm = (props) => {
         },
     ]
 
-    const getLevelData = async () => {
+    const getDishesData = async () => {
         try {
-            const data = await getAllLevel()
-            return setLevelData(data)
+            const data = await getAllDishes();
+            return setDishesData(data)
         } catch (err) {
             console.log(err)
         }
     }
 
     const deleteItem = id => {
-        deleteLevel(id).then(data => {
+        deleteDishes(id).then(data => {
             if (data.status === 0) {
-                getLevelData()
+                getDishesData()
             }
             else message.error(data.message)
         })
@@ -69,12 +80,12 @@ const LevelForm = (props) => {
         e.preventDefault();
         props.form.validateFields((err, values) => {
             if (!err) {
-                createNewLevel(values)
+                createNewDishes(values)
                     .then(data => {
                         console.log(data)
                         if (data.status === 0) {
                             message.success(data.message)
-                            getLevelData()
+                            getDishesData()
                         } else message.error(data.message)
                     })
                     .catch(err => {
@@ -102,25 +113,61 @@ const LevelForm = (props) => {
                             </Form.Item>
                         </div>
                         <div className="col-sm-6">
-                            <Form.Item label="Image">
-                                {getFieldDecorator('image', {
-                                    rules: [{ required: true, message: 'Please input image!' }],
+                            <Form.Item label="Image url">
+                                {getFieldDecorator('image_url', {
+                                    rules: [{ required: true, message: 'Please input image url!' }],
                                 })(
                                     <Input
                                         size="large"
-                                        placeholder="image"
+                                        placeholder="Image url"
                                     />,
                                 )}
                             </Form.Item>
                         </div>
                         <div className="col-sm-6">
-                            <Form.Item label="Description">
-                                {getFieldDecorator('description', {
-                                    rules: [{ required: true, message: 'Please input description!' }],
+                            <Form.Item label="Protein">
+                                {getFieldDecorator('protein', {
+                                    rules: [{ required: true, message: 'Please input protein!' }],
                                 })(
                                     <Input
                                         size="large"
-                                        placeholder="Description"
+                                        placeholder="Protein"
+                                    />,
+                                )}
+                            </Form.Item>
+                        </div>
+                        <div className="col-sm-6">
+                            <Form.Item label="Fat">
+                                {getFieldDecorator('fat', {
+                                    rules: [{ required: true, message: 'Please input fat!' }],
+                                })(
+                                    <Input
+                                        size="large"
+                                        placeholder="Fat"
+                                    />,
+                                )}
+                            </Form.Item>
+                        </div>
+                        <div className="col-sm-6">
+                            <Form.Item label="Carb">
+                                {getFieldDecorator('carb', {
+                                    rules: [{ required: true, message: 'Please input carb!' }],
+                                })(
+                                    <Input
+                                        size="large"
+                                        placeholder="Carb"
+                                    />,
+                                )}
+                            </Form.Item>
+                        </div>
+                        <div className="col-sm-6">
+                            <Form.Item label="Calories">
+                                {getFieldDecorator('calories', {
+                                    rules: [{ required: true, message: 'Please input calories!' }],
+                                })(
+                                    <Input
+                                        size="large"
+                                        placeholder="Calories"
                                     />,
                                 )}
                             </Form.Item>
@@ -137,7 +184,7 @@ const LevelForm = (props) => {
 
                 <div className="row">
                     <div className="col-sm">
-                        {levelData && <Table dataSource={levelData} columns={columns} />}
+                        {dishesData && <Table dataSource={dishesData} columns={columns} />}
                     </div>
                 </div>
 
@@ -146,6 +193,6 @@ const LevelForm = (props) => {
     )
 }
 
-const LevelPage = Form.create({ name: 'Level_form' })(LevelForm);
+const DishesPage = Form.create({ name: 'dishes_form' })(DishesForm);
 
-export default LevelPage
+export default DishesPage

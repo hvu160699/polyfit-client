@@ -1,20 +1,25 @@
 import React, { useState, useEffect } from 'react'
-import { Form, Input, message, Button, Table, Divider, Popconfirm } from 'antd'
-import { getAllLevel, createNewLevel, deleteLevel } from '../../../api/level.api'
+import { Form, Input, message, Button, Table, Divider, Popconfirm, Select } from 'antd'
+import { getAllMeals, deleteMeals, createNewMeals } from '../../../api/meals.api'
+import { getAllDiets } from '../../../api/diets.api'
 
-const LevelForm = (props) => {
+const { Option } = Select
+
+const MealsForm = (props) => {
 
     const { getFieldDecorator } = props.form
-    const [levelData, setLevelData] = useState([])
+    const [mealsData, setMealsData] = useState([])
+    const [dietsData, setDietsData] = useState([])
 
     useEffect(() => {
-        getLevelData()
+        getDietsData()
+        getMealsData()
     }, [])
 
     const columns = [
         {
             title: 'ID',
-            dataIndex: 'id',
+            dataIndexL: 'id',
             key: 'id'
         },
         {
@@ -23,14 +28,9 @@ const LevelForm = (props) => {
             key: 'title',
         },
         {
-            title: 'Image',
-            dataIndex: 'image',
-            key: 'image'
-        },
-        {
-            title: 'Description',
-            dataIndex: 'description',
-            key: 'description'
+            title: 'ID Diets',
+            dataIndex: 'id_diets',
+            key: 'id_diets'
         },
         {
             title: 'Action',
@@ -47,19 +47,28 @@ const LevelForm = (props) => {
         },
     ]
 
-    const getLevelData = async () => {
+    const getDietsData = async () => {
         try {
-            const data = await getAllLevel()
-            return setLevelData(data)
+            const data = await getAllDiets()
+            return setDietsData(data)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const getMealsData = async () => {
+        try {
+            const data = await getAllMeals();
+            return setMealsData(data)
         } catch (err) {
             console.log(err)
         }
     }
 
     const deleteItem = id => {
-        deleteLevel(id).then(data => {
+        deleteMeals(id).then(data => {
             if (data.status === 0) {
-                getLevelData()
+                getMealsData()
             }
             else message.error(data.message)
         })
@@ -69,12 +78,12 @@ const LevelForm = (props) => {
         e.preventDefault();
         props.form.validateFields((err, values) => {
             if (!err) {
-                createNewLevel(values)
+                createNewMeals(values)
                     .then(data => {
                         console.log(data)
                         if (data.status === 0) {
                             message.success(data.message)
-                            getLevelData()
+                            getMealsData()
                         } else message.error(data.message)
                     })
                     .catch(err => {
@@ -102,26 +111,16 @@ const LevelForm = (props) => {
                             </Form.Item>
                         </div>
                         <div className="col-sm-6">
-                            <Form.Item label="Image">
-                                {getFieldDecorator('image', {
-                                    rules: [{ required: true, message: 'Please input image!' }],
+                            <Form.Item label="ID Meals">
+                                {getFieldDecorator('id_meals', {
+                                    // rules: [{ required: true, message: 'Please input your Password!' }],
                                 })(
-                                    <Input
-                                        size="large"
-                                        placeholder="image"
-                                    />,
-                                )}
-                            </Form.Item>
-                        </div>
-                        <div className="col-sm-6">
-                            <Form.Item label="Description">
-                                {getFieldDecorator('description', {
-                                    rules: [{ required: true, message: 'Please input description!' }],
-                                })(
-                                    <Input
-                                        size="large"
-                                        placeholder="Description"
-                                    />,
+                                    <Select size="large">
+                                        {dietsData.map((element, key) => {
+                                            // console.log(element)
+                                            return <Option key={key} value={element.title}>{element.title}</Option>
+                                        })}
+                                    </Select>
                                 )}
                             </Form.Item>
                         </div>
@@ -137,7 +136,7 @@ const LevelForm = (props) => {
 
                 <div className="row">
                     <div className="col-sm">
-                        {levelData && <Table dataSource={levelData} columns={columns} />}
+                        {mealsData && <Table dataSource={mealsData} columns={columns} />}
                     </div>
                 </div>
 
@@ -146,6 +145,6 @@ const LevelForm = (props) => {
     )
 }
 
-const LevelPage = Form.create({ name: 'Level_form' })(LevelForm);
+const MealsPage = Form.create({ name: 'Meals_form' })(MealsForm);
 
-export default LevelPage
+export default MealsPage
