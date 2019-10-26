@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from 'react'
-import { Form, Input, message, Button, Table, Divider, Popconfirm } from 'antd'
+import { Form, Input, message, Button, Table, Divider, Popconfirm, Select } from 'antd'
 import { getAllDishes, createNewDishes, deleteDishes } from '../../../api/dishes.api'
+import { getAllMeals } from '../../../api/meals.api'
+import { getAllIngredients } from '../../../api/ingredients.api'
 
+const { Option } = Select
 
 const DishesForm = (props) => {
 
     const { getFieldDecorator } = props.form
     const [dishesData, setDishesData] = useState([])
+    const [mealsData, setMealsData] = useState([])
+    const [ingredientsData, setIngredientsData] = useState([])
 
     useEffect(() => {
+        getMealsData()
+        getIngredientsData()
         getDishesData()
     }, [])
 
@@ -26,7 +33,8 @@ const DishesForm = (props) => {
         {
             title: 'Image url',
             dataIndex: 'image_url',
-            key: 'image_url'
+            key: 'image_url',
+            ellipsis: true,
         },
         {
             title: 'Protein',
@@ -44,6 +52,11 @@ const DishesForm = (props) => {
             key: 'calories'
         },
         {
+            title: 'ID Meals',
+            dataIndex: 'polyfitMealId',
+            key: 'polyfitMealId'
+        },
+        {
             title: 'Action',
             key: 'action',
             render: (row) => (
@@ -58,6 +71,25 @@ const DishesForm = (props) => {
         },
     ]
 
+    const getMealsData = async () => {
+        try {
+            const data = await getAllMeals();
+            return setMealsData(data)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+
+    const getIngredientsData = async () => {
+        try {
+            const data = await getAllIngredients();
+            return setIngredientsData(data)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     const getDishesData = async () => {
         try {
             const data = await getAllDishes();
@@ -70,6 +102,7 @@ const DishesForm = (props) => {
     const deleteItem = id => {
         deleteDishes(id).then(data => {
             if (data.status === 0) {
+                message.success(data.message)
                 getDishesData()
             }
             else message.error(data.message)
@@ -82,7 +115,6 @@ const DishesForm = (props) => {
             if (!err) {
                 createNewDishes(values)
                     .then(data => {
-                        console.log(data)
                         if (data.status === 0) {
                             message.success(data.message)
                             getDishesData()
@@ -172,6 +204,34 @@ const DishesForm = (props) => {
                                 )}
                             </Form.Item>
                         </div>
+
+                        <div className="col-sm-6">
+                            <Form.Item label="ID Meals">
+                                {getFieldDecorator('id_meals', {
+                                    // rules: [{ required: true, message: 'Please input your Password!' }],
+                                })(
+                                    <Select size="large">
+                                        {mealsData.map((element, key) => {
+                                            return <Option key={key} value={element.id}>{element.title}</Option>
+                                        })}
+                                    </Select>
+                                )}
+                            </Form.Item>
+                        </div>
+                        <div className="col-sm-6">
+                            <Form.Item label="ID Ingredients">
+                                {getFieldDecorator('id_ingredients', {
+                                    // rules: [{ required: true, message: 'Please input your Password!' }],
+                                })(
+                                    <Select size="large">
+                                        {ingredientsData.map((element, key) => {
+                                            return <Option key={key} value={element.id}>{element.title}</Option>
+                                        })}
+                                    </Select>
+                                )}
+                            </Form.Item>
+                        </div>
+
                     </div>
                     <div className="row">
                         <div className="col-sm">

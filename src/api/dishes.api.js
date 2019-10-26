@@ -22,6 +22,8 @@ export function createNewDishes(values) {
             fat: values.fat,
             carb: values.carb,
             calories: values.calories,
+            id_meals: values.id_meals,
+            id_ingredients: values.id_ingredients
         })
             .then(data => {
                 resolve(data)

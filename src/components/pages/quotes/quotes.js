@@ -1,25 +1,20 @@
 import React, { useState, useEffect } from 'react'
-import { Form, Input, message, Button, Table, Divider, Popconfirm, Select } from 'antd'
-import { getAllMeals, deleteMeals, createNewMeals } from '../../../api/meals.api'
-import { getAllDiets } from '../../../api/diets.api'
+import { Form, Input, message, Button, Table, Divider, Popconfirm } from 'antd'
+import { getAllQuotes, deleteQuotes, createNewQuotes } from '../../../api/quotes.api'
 
-const { Option } = Select
-
-const MealsForm = (props) => {
+const QuotesForm = (props) => {
 
     const { getFieldDecorator } = props.form
-    const [mealsData, setMealsData] = useState([])
-    const [dietsData, setDietsData] = useState([])
+    const [quotesData, setQuotesData] = useState([])
 
     useEffect(() => {
-        getDietsData()
-        getMealsData()
+        getQuotesData()
     }, [])
 
     const columns = [
         {
             title: 'ID',
-            dataIndexL: 'id',
+            dataIndex: 'id',
             key: 'id'
         },
         {
@@ -28,9 +23,10 @@ const MealsForm = (props) => {
             key: 'title',
         },
         {
-            title: 'ID Diets',
-            dataIndex: 'polyfitDietId',
-            key: 'polyfitDietId'
+            title: 'Image',
+            dataIndex: 'image_url',
+            key: 'image_url',
+            ellipsis: true,
         },
         {
             title: 'Action',
@@ -47,29 +43,20 @@ const MealsForm = (props) => {
         },
     ]
 
-    const getDietsData = async () => {
+    const getQuotesData = async () => {
         try {
-            const data = await getAllDiets()
-            return setDietsData(data)
-        } catch (err) {
-            console.log(err)
-        }
-    }
-
-    const getMealsData = async () => {
-        try {
-            const data = await getAllMeals();
-            return setMealsData(data)
+            const data = await getAllQuotes()
+            return setQuotesData(data)
         } catch (err) {
             console.log(err)
         }
     }
 
     const deleteItem = id => {
-        deleteMeals(id).then(data => {
+        deleteQuotes(id).then(data => {
             if (data.status === 0) {
                 message.success(data.message)
-                getMealsData()
+                return getQuotesData()
             }
             else message.error(data.message)
         })
@@ -79,11 +66,11 @@ const MealsForm = (props) => {
         e.preventDefault();
         props.form.validateFields((err, values) => {
             if (!err) {
-                createNewMeals(values)
+                createNewQuotes(values)
                     .then(data => {
                         if (data.status === 0) {
                             message.success(data.message)
-                            getMealsData()
+                            getQuotesData()
                         } else message.error(data.message)
                     })
                     .catch(err => {
@@ -111,16 +98,14 @@ const MealsForm = (props) => {
                             </Form.Item>
                         </div>
                         <div className="col-sm-6">
-                            <Form.Item label="ID Diets">
-                                {getFieldDecorator('id_diets', {
-                                    // rules: [{ required: true, message: 'Please input your Password!' }],
+                            <Form.Item label="Image">
+                                {getFieldDecorator('image_url', {
+                                    rules: [{ required: true, message: 'Please input image!' }],
                                 })(
-                                    <Select size="large">
-                                        {dietsData.map((element, key) => {
-                                            // console.log(element)
-                                            return <Option key={key} value={element.id}>{element.title}</Option>
-                                        })}
-                                    </Select>
+                                    <Input
+                                        size="large"
+                                        placeholder="image"
+                                    />,
                                 )}
                             </Form.Item>
                         </div>
@@ -136,7 +121,7 @@ const MealsForm = (props) => {
 
                 <div className="row">
                     <div className="col-sm">
-                        {mealsData && <Table dataSource={mealsData} columns={columns} />}
+                        {quotesData && <Table dataSource={quotesData} columns={columns} />}
                     </div>
                 </div>
 
@@ -145,6 +130,6 @@ const MealsForm = (props) => {
     )
 }
 
-const MealsPage = Form.create({ name: 'Meals_form' })(MealsForm);
+const QuotesPage = Form.create({ name: 'Quotes_form' })(QuotesForm);
 
-export default MealsPage
+export default QuotesPage

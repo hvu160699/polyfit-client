@@ -60,6 +60,7 @@ const IngredientsForm = (props) => {
     const deleteItem = id => {
         deleteIngredients(id).then(data => {
             if (data.status === 0) {
+                message.success(data.message)
                 getIngredientsData()
             }
             else message.error(data.message)
@@ -72,7 +73,6 @@ const IngredientsForm = (props) => {
             if (!err) {
                 createNewIngredients(values)
                     .then(data => {
-                        console.log(data)
                         if (data.status === 0) {
                             message.success(data.message)
                             getIngredientsData()

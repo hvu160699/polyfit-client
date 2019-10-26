@@ -19,6 +19,7 @@ export function createNewDiets(values) {
             title: values.title,
             description: values.description,
             image_url: values.image_url,
+            id_level: values.id_level
         })
             .then(data => {
                 resolve(data)

@@ -59,7 +59,8 @@ const LevelForm = (props) => {
     const deleteItem = id => {
         deleteLevel(id).then(data => {
             if (data.status === 0) {
-                getLevelData()
+                message.success(data.message)
+                return getLevelData()
             }
             else message.error(data.message)
         })
@@ -71,7 +72,6 @@ const LevelForm = (props) => {
             if (!err) {
                 createNewLevel(values)
                     .then(data => {
-                        console.log(data)
                         if (data.status === 0) {
                             message.success(data.message)
                             getLevelData()

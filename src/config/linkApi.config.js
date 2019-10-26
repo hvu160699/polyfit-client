@@ -1,4 +1,5 @@
 export const HOST_STATIC = "https://poly-fitness.herokuapp.com/"
+// export const HOST_STATIC = "http://localhost:3030/"
 
 export const GET_ALL_LEVEL = () => `level/getAll`
 
@@ -56,6 +57,13 @@ export const UPDATE_INGREDIENTS = () => `ingredients/update`
 
 export const DELETE_INGREDIENTS = id => `ingredients/delete/${id}`
 
+export const GET_ALL_QUOTES = () => `quotes/getAll`
+
+export const CREATE_QUOTES = () => `quotes/create`
+
+export const UPDATE_QUOTES = () => `quotes/update`
+
+export const DELETE_QUOTES = id => `quotes/delete/${id}`
 
 
 

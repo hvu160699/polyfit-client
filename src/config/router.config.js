@@ -21,3 +21,6 @@ export const redirect_to_dishes = () => `/dishes`
 
 export const ingredients = "/ingredients"
 export const redirect_to_ingredients = () => `/ingredients`
+
+export const quotes = "/quotes"
+export const redirect_to_quotes = () => `/quotes`

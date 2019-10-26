@@ -11,6 +11,7 @@ import BodypartsPage from "../components/pages/bodyparts/bodyparts";
 import MealsPage from "../components/pages/meals/meals";
 import DishesPage from "../components/pages/dishes/dishes";
 import IngredientsPage from "../components/pages/ingredients/ingredients";
+import QuotesPage from "../components/pages/quotes/quotes";
 
 const RouterIndex = (
     <Switch>
@@ -22,6 +23,7 @@ const RouterIndex = (
         <ScrollToTopRoute exact path={path.meals} component={MealsPage} />
         <ScrollToTopRoute exact path={path.dishes} component={DishesPage} />
         <ScrollToTopRoute exact path={path.ingredients} component={IngredientsPage} />
+        <ScrollToTopRoute exact path={path.quotes} component={QuotesPage} />
         <ScrollToTopRoute component={Page404} />
     </Switch>
 );

@@ -55,7 +55,8 @@ const BodypartsForm = (props) => {
     const deleteItem = id => {
         deleteBodyparts(id).then(data => {
             if (data.status === 0) {
-                getBodypartsData()
+                message.success(data.message)
+                return getBodypartsData()
             }
             else message.error(data.message)
         })
@@ -67,7 +68,6 @@ const BodypartsForm = (props) => {
             if (!err) {
                 createNewBodyparts(values)
                     .then(data => {
-                        console.log(data)
                         if (data.status === 0) {
                             message.success(data.message)
                             getBodypartsData()

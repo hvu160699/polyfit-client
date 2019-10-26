@@ -1,14 +1,28 @@
 import React, { useState, useEffect } from 'react'
-import { Form, Input, message, Button, Table, Divider, Popconfirm } from 'antd'
+import { Form, Input, message, Button, Table, Divider, Popconfirm, Select } from 'antd'
 import { getAllDiets, deleteDiets, createNewDiets } from '../../../api/diets.api'
+import { getAllLevel } from '../../../api/level.api'
 
+const { Option } = Select
 
 const DietsForm = (props) => {
 
     const { getFieldDecorator } = props.form
     const [dietsData, setDietsData] = useState([])
+    const [levelData, setLevelData] = useState([])
+
+    const getLevelData = async () => {
+        try {
+            const data = await getAllLevel();
+            return setLevelData(data);
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
 
     useEffect(() => {
+        getLevelData()
         getDietsData()
     }, [])
 
@@ -26,7 +40,13 @@ const DietsForm = (props) => {
         {
             title: 'Image url',
             dataIndex: 'image_url',
-            key: 'image_url'
+            key: 'image_url',
+            ellipsis: true,
+        },
+        {
+            title: 'ID Level',
+            dataIndex: 'polyfitLevelId',
+            key: 'polyfitLevelId'
         },
         {
             title: 'Action',
@@ -67,7 +87,6 @@ const DietsForm = (props) => {
             if (!err) {
                 createNewDiets(values)
                     .then(data => {
-                        console.log(data)
                         if (data.status === 0) {
                             message.success(data.message)
                             getDietsData()
@@ -118,6 +137,20 @@ const DietsForm = (props) => {
                                         size="large"
                                         placeholder="Image url"
                                     />,
+                                )}
+                            </Form.Item>
+                        </div>
+                        <div className="col-sm-6">
+                            <Form.Item label="ID Level">
+                                {getFieldDecorator('id_level', {
+                                    // rules: [{ required: true, message: 'Please input your Password!' }],
+                                })(
+                                    <Select size="large">
+                                        {levelData.map((element, key) => {
+                                            // console.log(element)
+                                            return <Option key={key} value={element.id}>{element.title}</Option>
+                                        })}
+                                    </Select>
                                 )}
                             </Form.Item>
                         </div>
