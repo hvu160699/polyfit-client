@@ -19,6 +19,7 @@ export function createNewIngredients(values) {
             title: values.title,
             price: values.price,
             unit: values.unit,
+            image_url: values.image_url,
         })
             .then(data => {
                 resolve(data)

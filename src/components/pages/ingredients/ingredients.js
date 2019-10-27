@@ -34,6 +34,12 @@ const IngredientsForm = (props) => {
             key: 'unit'
         },
         {
+            title: 'Image url',
+            dataIndex: 'image_url',
+            key: 'image_url',
+            ellipsis: true,
+        },
+        {
             title: 'Action',
             key: 'action',
             render: (row) => (
@@ -122,6 +128,18 @@ const IngredientsForm = (props) => {
                                     <Input
                                         size="large"
                                         placeholder="Unit"
+                                    />,
+                                )}
+                            </Form.Item>
+                        </div>
+                        <div className="col-sm-6">
+                            <Form.Item label="Image url">
+                                {getFieldDecorator('image_url', {
+                                    rules: [{ required: true, message: 'Please input image url!' }],
+                                })(
+                                    <Input
+                                        size="large"
+                                        placeholder="Image url"
                                     />,
                                 )}
                             </Form.Item>

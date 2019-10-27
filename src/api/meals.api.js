@@ -17,6 +17,7 @@ export function createNewMeals(values) {
     return new Promise((resolve, reject) => {
         callApi(linkAPI.CREATE_MEALS(), "POST", {
             title: values.title,
+            image_url: values.image_url,
             id_diets: values.id_diets,
         })
             .then(data => {

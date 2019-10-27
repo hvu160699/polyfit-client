@@ -28,6 +28,12 @@ const MealsForm = (props) => {
             key: 'title',
         },
         {
+            title: 'Image url',
+            dataIndex: 'image_url',
+            key: 'image_url',
+            ellipsis: true,
+        },
+        {
             title: 'ID Diets',
             dataIndex: 'polyfitDietId',
             key: 'polyfitDietId'
@@ -106,6 +112,18 @@ const MealsForm = (props) => {
                                     <Input
                                         size="large"
                                         placeholder="Title"
+                                    />,
+                                )}
+                            </Form.Item>
+                        </div>
+                        <div className="col-sm-6">
+                            <Form.Item label="Image url">
+                                {getFieldDecorator('image_url', {
+                                    rules: [{ required: true, message: 'Please input image url!' }],
+                                })(
+                                    <Input
+                                        size="large"
+                                        placeholder="Image url"
                                     />,
                                 )}
                             </Form.Item>
