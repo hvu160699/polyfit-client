@@ -25,7 +25,8 @@ const LevelForm = (props) => {
         {
             title: 'Image',
             dataIndex: 'image',
-            key: 'image'
+            key: 'image',
+            ellipsis: true,
         },
         {
             title: 'Description',
@@ -74,7 +75,8 @@ const LevelForm = (props) => {
                     .then(data => {
                         if (data.status === 0) {
                             message.success(data.message)
-                            getLevelData()
+                            getLevelData().then(() => props.form.resetFields())
+
                         } else message.error(data.message)
                     })
                     .catch(err => {
@@ -128,14 +130,14 @@ const LevelForm = (props) => {
                     </div>
                     <div className="row">
                         <div className="col-sm">
-                            <Button type="primary" htmlType="submit" className="login-form-button">
+                            <Button size="large" type="primary" htmlType="submit" className="login-form-button">
                                 Submit
                             </Button>
                         </div>
                     </div>
                 </Form>
 
-                <div className="row">
+                <div className="row mt-4">
                     <div className="col-sm">
                         {levelData && <Table dataSource={levelData} columns={columns} />}
                     </div>

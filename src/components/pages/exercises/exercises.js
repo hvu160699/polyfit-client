@@ -78,11 +78,13 @@ const ExercisesForm = (props) => {
             title: 'Content',
             dataIndex: 'content',
             key: 'content',
+            ellipsis: true,
         },
         {
             title: 'Tips',
             dataIndex: 'tips',
             key: 'tips',
+            ellipsis: true,
         },
         {
             title: 'Sets',
@@ -98,6 +100,7 @@ const ExercisesForm = (props) => {
             title: 'Video url',
             dataIndex: 'video_url',
             key: 'video_url',
+            ellipsis: true,
         },
         {
             title: 'Image url',
@@ -144,9 +147,11 @@ const ExercisesForm = (props) => {
             if (!err) {
                 createNewExercises(values)
                     .then(data => {
+                        console.log(values.bodypartsArr)
                         if (data.status === 0) {
                             message.success(data.message)
-                            getExercisesData()
+                            getExercisesData().then(() => props.form.resetFields())
+
                         } else message.error(data.message)
                     })
                     .catch(err => {
@@ -241,6 +246,7 @@ const ExercisesForm = (props) => {
                                     rules: [{ required: true, message: 'Please input rest!' }],
                                 })(
                                     <InputNumber
+                                        width={"100%"}
                                         size="large"
                                         placeholder="Rest"
                                     />,
@@ -303,16 +309,28 @@ const ExercisesForm = (props) => {
                     </div>
                     <div className="row">
                         <div className="col-sm">
-                            <Button type="primary" htmlType="submit" className="login-form-button">
+                            <Button type="primary" size="large" htmlType="submit" className="login-form-button">
                                 Submit
                             </Button>
                         </div>
                     </div>
                 </Form>
 
-                <div className="row">
+                <div className="row mt-4">
                     <div className="col-sm">
-                        {exerData && <Table dataSource={exerData} columns={columns} />}
+                        {exerData &&
+                            <Table
+                                width={"100%"}
+                                expandedRowRender={record => (
+                                    <div>
+                                        <p style={{ margin: 0 }}><b>Tips :</b> {record.tips}</p>
+                                        <p style={{ margin: 0 }}><b>Content :</b> {record.content}</p>
+                                        <p style={{ margin: 0 }}><b>Image url :</b> {record.image_url}</p>
+                                        <p style={{ margin: 0 }}><b>Video url :</b> {record.video_url}</p>
+                                    </div>
+                                )}
+                                dataSource={exerData}
+                                columns={columns} />}
                     </div>
                 </div>
             </div>

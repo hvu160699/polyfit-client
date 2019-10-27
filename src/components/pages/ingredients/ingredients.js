@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Form, Input, message, Button, Table, Divider, Popconfirm } from 'antd'
 import { getAllIngredients, createNewIngredients, deleteIngredients } from '../../../api/ingredients.api'
 
+const { TextArea } = Input
 
 const IngredientsForm = (props) => {
 
@@ -22,16 +23,6 @@ const IngredientsForm = (props) => {
             title: 'Title',
             dataIndex: 'title',
             key: 'title',
-        },
-        {
-            title: 'Price',
-            dataIndex: 'price',
-            key: 'price'
-        },
-        {
-            title: 'unit',
-            dataIndex: 'unit',
-            key: 'unit'
         },
         {
             title: 'Image url',
@@ -81,7 +72,8 @@ const IngredientsForm = (props) => {
                     .then(data => {
                         if (data.status === 0) {
                             message.success(data.message)
-                            getIngredientsData()
+                            getIngredientsData().then(() => props.form.resetFields())
+
                         } else message.error(data.message)
                     })
                     .catch(err => {
@@ -109,30 +101,6 @@ const IngredientsForm = (props) => {
                             </Form.Item>
                         </div>
                         <div className="col-sm-6">
-                            <Form.Item label="Price">
-                                {getFieldDecorator('price', {
-                                    rules: [{ required: true, message: 'Please input price!' }],
-                                })(
-                                    <Input
-                                        size="large"
-                                        placeholder="Price"
-                                    />,
-                                )}
-                            </Form.Item>
-                        </div>
-                        <div className="col-sm-6">
-                            <Form.Item label="Unit">
-                                {getFieldDecorator('unit', {
-                                    rules: [{ required: true, message: 'Please input unit!' }],
-                                })(
-                                    <Input
-                                        size="large"
-                                        placeholder="Unit"
-                                    />,
-                                )}
-                            </Form.Item>
-                        </div>
-                        <div className="col-sm-6">
                             <Form.Item label="Image url">
                                 {getFieldDecorator('image_url', {
                                     rules: [{ required: true, message: 'Please input image url!' }],
@@ -147,16 +115,22 @@ const IngredientsForm = (props) => {
                     </div>
                     <div className="row">
                         <div className="col-sm">
-                            <Button type="primary" htmlType="submit" className="login-form-button">
+                            <Button size="large" type="primary" htmlType="submit" className="login-form-button">
                                 Submit
                             </Button>
                         </div>
                     </div>
                 </Form>
 
-                <div className="row">
+                <div className="row mt-4">
                     <div className="col-sm">
-                        {ingredientsData && <Table dataSource={ingredientsData} columns={columns} />}
+                        {ingredientsData &&
+                            <Table
+                                expandedRowRender={record => (
+                                    <p style={{ margin: 0 }}><b>Image url :</b> {record.image_url}</p>
+                                )}
+                                dataSource={ingredientsData}
+                                columns={columns} />}
                     </div>
                 </div>
 

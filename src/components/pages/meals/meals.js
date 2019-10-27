@@ -89,7 +89,8 @@ const MealsForm = (props) => {
                     .then(data => {
                         if (data.status === 0) {
                             message.success(data.message)
-                            getMealsData()
+                            getMealsData().then(() => props.form.resetFields())
+
                         } else message.error(data.message)
                     })
                     .catch(err => {
@@ -145,16 +146,22 @@ const MealsForm = (props) => {
                     </div>
                     <div className="row">
                         <div className="col-sm">
-                            <Button type="primary" htmlType="submit" className="login-form-button">
+                            <Button size="large" type="primary" htmlType="submit" className="login-form-button">
                                 Submit
                             </Button>
                         </div>
                     </div>
                 </Form>
 
-                <div className="row">
+                <div className="row mt-4">
                     <div className="col-sm">
-                        {mealsData && <Table dataSource={mealsData} columns={columns} />}
+                        {mealsData &&
+                            <Table
+                                expandedRowRender={record => (
+                                    <p style={{ margin: 0 }}><b>Image url :</b> {record.image_url}</p>
+                                )}
+                                dataSource={mealsData}
+                                columns={columns} />}
                     </div>
                 </div>
 

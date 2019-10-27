@@ -23,7 +23,7 @@ const QuotesForm = (props) => {
             key: 'title',
         },
         {
-            title: 'Image',
+            title: 'Image url',
             dataIndex: 'image_url',
             key: 'image_url',
             ellipsis: true,
@@ -70,7 +70,8 @@ const QuotesForm = (props) => {
                     .then(data => {
                         if (data.status === 0) {
                             message.success(data.message)
-                            getQuotesData()
+                            getQuotesData().then(() => props.form.resetFields())
+
                         } else message.error(data.message)
                     })
                     .catch(err => {
@@ -88,7 +89,7 @@ const QuotesForm = (props) => {
                         <div className="col-sm-6">
                             <Form.Item label="Title">
                                 {getFieldDecorator('title', {
-                                    rules: [{ required: true, message: 'Please input title!' }],
+                                    // rules: [{ required: true, message: 'Please input title!' }],
                                 })(
                                     <Input
                                         size="large"
@@ -112,16 +113,22 @@ const QuotesForm = (props) => {
                     </div>
                     <div className="row">
                         <div className="col-sm">
-                            <Button type="primary" htmlType="submit" className="login-form-button">
+                            <Button size="large" type="primary" htmlType="submit" className="login-form-button">
                                 Submit
                             </Button>
                         </div>
                     </div>
                 </Form>
 
-                <div className="row">
+                <div className="row mt-4">
                     <div className="col-sm">
-                        {quotesData && <Table dataSource={quotesData} columns={columns} />}
+                        {quotesData &&
+                            <Table
+                                expandedRowRender={record => (
+                                    <p style={{ margin: 0 }}><b>Image url :</b> {record.image_url}</p>
+                                )}
+                                dataSource={quotesData}
+                                columns={columns} />}
                     </div>
                 </div>
 

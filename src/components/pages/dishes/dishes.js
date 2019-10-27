@@ -5,6 +5,7 @@ import { getAllMeals } from '../../../api/meals.api'
 import { getAllIngredients } from '../../../api/ingredients.api'
 
 const { Option } = Select
+const { TextArea } = Input
 
 const DishesForm = (props) => {
 
@@ -70,6 +71,12 @@ const DishesForm = (props) => {
             )
         },
         {
+            title: 'Description',
+            dataIndex: 'description',
+            key: 'description',
+            ellipsis: true,
+        },
+        {
             title: 'Action',
             key: 'action',
             render: (row) => (
@@ -106,7 +113,6 @@ const DishesForm = (props) => {
     const getDishesData = async () => {
         try {
             const data = await getAllDishes();
-            console.log(data)
             return setDishesData(data)
         } catch (err) {
             console.log(err)
@@ -131,7 +137,8 @@ const DishesForm = (props) => {
                     .then(data => {
                         if (data.status === 0) {
                             message.success(data.message)
-                            getDishesData()
+                            getDishesData().then(() => props.form.resetFields())
+
                         } else message.error(data.message)
                     })
                     .catch(err => {
@@ -218,7 +225,6 @@ const DishesForm = (props) => {
                                 )}
                             </Form.Item>
                         </div>
-
                         <div className="col-sm-6">
                             <Form.Item label="ID Meals">
                                 {getFieldDecorator('id_meals', {
@@ -246,20 +252,41 @@ const DishesForm = (props) => {
                                 )}
                             </Form.Item>
                         </div>
+                        <div className="col-sm-6">
+                            <Form.Item label="Description">
+                                {getFieldDecorator('description', {
+                                    rules: [{ required: true, message: 'Please input description!' }],
+                                })(
+                                    <TextArea
+                                        size="large"
+                                        placeholder="Description"
+                                    />,
+                                )}
+                            </Form.Item>
+                        </div>
 
                     </div>
                     <div className="row">
                         <div className="col-sm">
-                            <Button type="primary" htmlType="submit" className="login-form-button">
+                            <Button size="large" type="primary" htmlType="submit" className="login-form-button">
                                 Submit
                             </Button>
                         </div>
                     </div>
                 </Form>
 
-                <div className="row">
+                <div className="row mt-4">
                     <div className="col-sm">
-                        {dishesData && <Table dataSource={dishesData} columns={columns} />}
+                        {dishesData &&
+                            <Table
+                                expandedRowRender={record => (
+                                    <div>
+                                        <p style={{ margin: 0 }}><b>Image url :</b> {record.image_url}</p>
+                                        <p style={{ margin: 0 }}><b>Description :</b> {record.description}</p>
+                                    </div>
+                                )}
+                                dataSource={dishesData}
+                                columns={columns} />}
                     </div>
                 </div>
 

@@ -17,8 +17,6 @@ export function createNewIngredients(values) {
     return new Promise((resolve, reject) => {
         callApi(linkAPI.CREATE_INGREDIENTS(), "POST", {
             title: values.title,
-            price: values.price,
-            unit: values.unit,
             image_url: values.image_url,
         })
             .then(data => {
