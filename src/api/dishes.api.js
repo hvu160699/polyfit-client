@@ -23,7 +23,7 @@ export function createNewDishes(values) {
             carb: values.carb,
             calories: values.calories,
             id_meals: values.id_meals,
-            id_ingredients: values.id_ingredients
+            ingredientsArr: values.ingredientsArr
         })
             .then(data => {
                 resolve(data)

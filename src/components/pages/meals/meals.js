@@ -19,7 +19,7 @@ const MealsForm = (props) => {
     const columns = [
         {
             title: 'ID',
-            dataIndexL: 'id',
+            dataIndex: 'id',
             key: 'id'
         },
         {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Form, Input, message, Button, Table, Divider, Popconfirm, Select } from 'antd'
+import { Form, Input, message, Button, Table, Divider, Popconfirm, Select, InputNumber } from 'antd'
 import { getAllDishes, createNewDishes, deleteDishes } from '../../../api/dishes.api'
 import { getAllMeals } from '../../../api/meals.api'
 import { getAllIngredients } from '../../../api/ingredients.api'
@@ -14,9 +14,9 @@ const DishesForm = (props) => {
     const [ingredientsData, setIngredientsData] = useState([])
 
     useEffect(() => {
+        getDishesData()
         getMealsData()
         getIngredientsData()
-        getDishesData()
     }, [])
 
     const columns = [
@@ -57,6 +57,19 @@ const DishesForm = (props) => {
             key: 'polyfitMealId'
         },
         {
+            title: 'Ingredients',
+            dataIndex: 'ingredients',
+            render: row => (
+                <dl>
+                    {
+                        row.map(item => {
+                            return <dt>{item.title}</dt>
+                        })
+                    }
+                </dl>
+            )
+        },
+        {
             title: 'Action',
             key: 'action',
             render: (row) => (
@@ -93,6 +106,7 @@ const DishesForm = (props) => {
     const getDishesData = async () => {
         try {
             const data = await getAllDishes();
+            console.log(data)
             return setDishesData(data)
         } catch (err) {
             console.log(err)
@@ -161,7 +175,7 @@ const DishesForm = (props) => {
                                 {getFieldDecorator('protein', {
                                     rules: [{ required: true, message: 'Please input protein!' }],
                                 })(
-                                    <Input
+                                    <InputNumber
                                         size="large"
                                         placeholder="Protein"
                                     />,
@@ -173,7 +187,7 @@ const DishesForm = (props) => {
                                 {getFieldDecorator('fat', {
                                     rules: [{ required: true, message: 'Please input fat!' }],
                                 })(
-                                    <Input
+                                    <InputNumber
                                         size="large"
                                         placeholder="Fat"
                                     />,
@@ -185,7 +199,7 @@ const DishesForm = (props) => {
                                 {getFieldDecorator('carb', {
                                     rules: [{ required: true, message: 'Please input carb!' }],
                                 })(
-                                    <Input
+                                    <InputNumber
                                         size="large"
                                         placeholder="Carb"
                                     />,
@@ -197,7 +211,7 @@ const DishesForm = (props) => {
                                 {getFieldDecorator('calories', {
                                     rules: [{ required: true, message: 'Please input calories!' }],
                                 })(
-                                    <Input
+                                    <InputNumber
                                         size="large"
                                         placeholder="Calories"
                                     />,
@@ -220,10 +234,11 @@ const DishesForm = (props) => {
                         </div>
                         <div className="col-sm-6">
                             <Form.Item label="ID Ingredients">
-                                {getFieldDecorator('id_ingredients', {
+                                {getFieldDecorator('ingredientsArr', {
                                     // rules: [{ required: true, message: 'Please input your Password!' }],
                                 })(
-                                    <Select size="large">
+                                    <Select mode="multiple"
+                                        size="large">
                                         {ingredientsData.map((element, key) => {
                                             return <Option key={key} value={element.id}>{element.title}</Option>
                                         })}

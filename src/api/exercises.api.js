@@ -26,7 +26,7 @@ export function createNewExercises(values) {
             video_url: values.video_url,
             image_url: values.image_url,
             id_level: values.id_level,
-            id_bodyparts: values.id_bodyparts,
+            bodypartsArr: values.bodypartsArr
         })
             .then(data => {
                 resolve(data)

@@ -4,6 +4,7 @@ import { getAllLevel } from '../../../api/level.api';
 import { getAllExercises, deleteExercises, createNewExercises } from '../../../api/exercises.api';
 import { getAllBodyparts } from '../../../api/bodyparts.api';
 const { Option } = Select;
+const { TextArea } = Input;
 
 const ExercisesForm = (props) => {
 
@@ -110,6 +111,19 @@ const ExercisesForm = (props) => {
             key: 'polyfitLevelId',
         },
         {
+            title: 'Bodyparts',
+            dataIndex: 'bodyparts',
+            render: row => (
+                <dl>
+                    {
+                        row.map(item => {
+                            return <dt>{item.title}</dt>
+                        })
+                    }
+                </dl>
+            )
+        },
+        {
             title: 'Action',
             key: 'action',
             render: (row) => (
@@ -176,8 +190,9 @@ const ExercisesForm = (props) => {
                                 {getFieldDecorator('content', {
                                     rules: [{ required: true, message: 'Please input content!' }],
                                 })(
-                                    <Input
-                                        size="large"
+                                    <TextArea
+                                        rows={4}
+                                        autoSize={true}
                                         placeholder="Content"
                                     />,
                                 )}
@@ -188,8 +203,9 @@ const ExercisesForm = (props) => {
                                 {getFieldDecorator('tips', {
                                     rules: [{ required: true, message: 'Please input tips!' }],
                                 })(
-                                    <Input
-                                        size="large"
+                                    <TextArea
+                                        rows={4}
+                                        autoSize={true}
                                         placeholder="Tips"
                                     />,
                                 )}
@@ -271,10 +287,10 @@ const ExercisesForm = (props) => {
                         </div>
                         <div className="col-sm-6">
                             <Form.Item label="ID Bodyparts">
-                                {getFieldDecorator('id_bodyparts', {
+                                {getFieldDecorator('bodypartsArr', {
                                     rules: [{ required: true, message: 'Please input ID Bodyparts!' }],
                                 })(
-                                    <Select size="large">
+                                    <Select mode="multiple" size="large">
                                         {bodypartsData.map((element, key) => {
                                             // console.log(element)
                                             return <Option key={key} value={element.id}>{element.title}</Option>
