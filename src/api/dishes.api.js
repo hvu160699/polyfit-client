@@ -35,16 +35,19 @@ export function createNewDishes(values) {
     })
 }
 
-export function updateDishes(values) {
+export function updateDishes(id, values) {
     return new Promise((resolve, reject) => {
         callApi(linkAPI.UPDATE_DISHES(), "PUT", {
-            id: values.id,
+            id: id,
             title: values.title,
             image_url: values.image_url,
             protein: values.protein,
             fat: values.fat,
             carb: values.carb,
             calories: values.calories,
+            id_meals: values.id_meals,
+            ingredientsArr: values.ingredientsArr,
+            description: values.description
         })
             .then(data => {
                 resolve(data)

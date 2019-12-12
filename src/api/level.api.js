@@ -13,6 +13,18 @@ export function getAllLevel() {
     });
 }
 
+export function getLevelById(id) {
+    return new Promise((resolve, reject) => {
+        callApi(linkAPI.GET_LEVEL_BY_ID(id), "GET")
+            .then(data => {
+                resolve(data.Object);
+            })
+            .catch(err => {
+                reject(err);
+            });
+    });
+}
+
 export function createNewLevel(values) {
     return new Promise((resolve, reject) => {
         callApi(linkAPI.CREATE_LEVEL(), "POST", {
@@ -29,10 +41,10 @@ export function createNewLevel(values) {
     })
 }
 
-export function updateLevel(values) {
+export function updateLevel(id, values) {
     return new Promise((resolve, reject) => {
         callApi(linkAPI.UPDATE_LEVEL(), "PUT", {
-            id: values.id,
+            id: id,
             title: values.title,
             description: values.description,
             image: values.image

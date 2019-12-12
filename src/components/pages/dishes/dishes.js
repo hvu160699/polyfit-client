@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Form, Input, message, Button, Table, Divider, Popconfirm, Select, InputNumber } from 'antd'
-import { getAllDishes, createNewDishes, deleteDishes } from '../../../api/dishes.api'
+import { Form, Input, message, Button, Table, Divider, Popconfirm, Select, InputNumber, Modal } from 'antd'
+import { getAllDishes, createNewDishes, deleteDishes, updateDishes } from '../../../api/dishes.api'
 import { getAllMeals } from '../../../api/meals.api'
 import { getAllIngredients } from '../../../api/ingredients.api'
 
@@ -13,6 +13,7 @@ const DishesForm = (props) => {
     const [dishesData, setDishesData] = useState([])
     const [mealsData, setMealsData] = useState([])
     const [ingredientsData, setIngredientsData] = useState([])
+    const [openedModal, setOpenedModal] = useState(false)
 
     useEffect(() => {
         getDishesData()
@@ -80,8 +81,126 @@ const DishesForm = (props) => {
             title: 'Action',
             key: 'action',
             render: (row) => (
-                <span>
-                    <a>Edit</a>
+                <span style={{ color: "#4287f5" }}>
+                    <a onClick={() => showDetailItem(row)}>Edit</a>
+                    <Modal
+                        key="editModal"
+                        title="Edit item"
+                        centered
+                        visible={openedModal === row.id}
+                        onOk={e => handleEdit(e)}
+                        onCancel={() => setOpenedModal(null)}
+                    >
+                        <Form onSubmit={handleEdit}>
+                            <div className="row">
+                                <div className="col-sm-6">
+                                    <Form.Item label="Title">
+                                        {getFieldDecorator('title', {
+                                        })(
+                                            <Input
+                                                size="large"
+                                                placeholder="Title"
+                                            />,
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-6">
+                                    <Form.Item label="Image url">
+                                        {getFieldDecorator('image_url', {
+                                        })(
+                                            <Input
+                                                size="large"
+                                                placeholder="Image url"
+                                            />,
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-6">
+                                    <Form.Item label="Protein">
+                                        {getFieldDecorator('protein', {
+                                        })(
+                                            <InputNumber
+                                                size="large"
+                                                placeholder="Protein"
+                                            />,
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-6">
+                                    <Form.Item label="Fat">
+                                        {getFieldDecorator('fat', {
+                                        })(
+                                            <InputNumber
+                                                size="large"
+                                                placeholder="Fat"
+                                            />,
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-6">
+                                    <Form.Item label="Carb">
+                                        {getFieldDecorator('carb', {
+                                        })(
+                                            <InputNumber
+                                                size="large"
+                                                placeholder="Carb"
+                                            />,
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-6">
+                                    <Form.Item label="Calories">
+                                        {getFieldDecorator('calories', {
+                                        })(
+                                            <InputNumber
+                                                size="large"
+                                                placeholder="Calories"
+                                            />,
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-6">
+                                    <Form.Item label="ID Meals">
+                                        {getFieldDecorator('id_meals', {
+                                            // rules: [{ required: true, message: 'Please input your Password!' }],
+                                        })(
+                                            <Select size="large">
+                                                {mealsData.map((element, key) => {
+                                                    return <Option key={key} value={element.id}>{element.title}</Option>
+                                                })}
+                                            </Select>
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-6">
+                                    <Form.Item label="ID Ingredients">
+                                        {getFieldDecorator('ingredientsArr', {
+                                            // rules: [{ required: true, message: 'Please input your Password!' }],
+                                        })(
+                                            <Select mode="multiple"
+                                                size="large">
+                                                {ingredientsData.map((element, key) => {
+                                                    return <Option key={key} value={element.id}>{element.title}</Option>
+                                                })}
+                                            </Select>
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-6">
+                                    <Form.Item label="Description">
+                                        {getFieldDecorator('description', {
+                                            rules: [{ required: true, message: 'Please input description!' }],
+                                        })(
+                                            <TextArea
+                                                size="large"
+                                                placeholder="Description"
+                                            />,
+                                        )}
+                                    </Form.Item>
+                                </div>
+                            </div>
+                        </Form>
+                    </Modal>
                     <Divider type="vertical" />
                     <Popconfirm title="Sure to delete?" onConfirm={() => deleteItem(row.id)}>
                         <a>Delete</a>
@@ -139,6 +258,30 @@ const DishesForm = (props) => {
                             message.success(data.message)
                             getDishesData().then(() => props.form.resetFields())
 
+                        } else message.error(data.message)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    });
+            }
+        });
+    }
+
+    const showDetailItem = async (data) => {
+        setOpenedModal(data.id)
+        props.form.setFieldsValue(data)
+    }
+
+    const handleEdit = e => {
+        e.preventDefault();
+        props.form.validateFields((err, values) => {
+            if (!err) {
+                updateDishes(openedModal, values)
+                    .then(data => {
+                        if (data.status === 0) {
+                            message.success(data.message)
+                            getDishesData().then(() => props.form.resetFields())
+                            setOpenedModal(null)
                         } else message.error(data.message)
                     })
                     .catch(err => {

@@ -37,10 +37,10 @@ export function createNewExercises(values) {
     })
 }
 
-export function updateExercises(values) {
+export function updateExercises(id, values) {
     return new Promise((resolve, reject) => {
         callApi(linkAPI.UPDATE_EXERCISES(), "PUT", {
-            id: values.id,
+            id: id,
             title: values.title,
             introduction: values.introduction,
             content: values.content,

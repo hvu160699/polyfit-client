@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { Form, Input, message, Button, Table, Divider, Popconfirm } from 'antd'
-import { getAllBodyparts, deleteBodyparts, createNewBodyparts } from '../../../api/bodyparts.api'
+import { Form, Input, message, Button, Table, Divider, Popconfirm, Modal } from 'antd'
+import { getAllBodyparts, deleteBodyparts, createNewBodyparts, updateBodyparts } from '../../../api/bodyparts.api'
 
 
 const BodypartsForm = (props) => {
 
     const { getFieldDecorator } = props.form
     const [bodypartsData, setBodypartsData] = useState([])
+    const [openedModal, setOpenedModal] = useState(false)
 
     useEffect(() => {
         getBodypartsData()
@@ -33,8 +34,43 @@ const BodypartsForm = (props) => {
             title: 'Action',
             key: 'action',
             render: (row) => (
-                <span>
-                    <a>Edit</a>
+                <span style={{ color: "#4287f5" }}>
+                    <a onClick={() => showDetailItem(row)}>Edit</a>
+                    <Modal
+                        key="editModal"
+                        title="Edit item"
+                        centered
+                        visible={openedModal === row.id}
+                        onOk={e => handleEdit(e)}
+                        onCancel={() => setOpenedModal(null)}
+                    >
+                        <Form onSubmit={handleEdit}>
+                            <div className="row">
+                                <div className="col-sm-6">
+                                    <Form.Item label="Title">
+                                        {getFieldDecorator('title', {
+                                        })(
+                                            <Input
+                                                size="large"
+                                                placeholder="Title"
+                                            />,
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-6">
+                                    <Form.Item label="Image url">
+                                        {getFieldDecorator('image_url', {
+                                        })(
+                                            <Input
+                                                size="large"
+                                                placeholder="Image url"
+                                            />,
+                                        )}
+                                    </Form.Item>
+                                </div>
+                            </div>
+                        </Form>
+                    </Modal>
                     <Divider type="vertical" />
                     <Popconfirm title="Sure to delete?" onConfirm={() => deleteItem(row.id)}>
                         <a>Delete</a>
@@ -73,6 +109,30 @@ const BodypartsForm = (props) => {
                             message.success(data.message)
                             getBodypartsData().then(() => props.form.resetFields())
 
+                        } else message.error(data.message)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    });
+            }
+        });
+    }
+
+    const showDetailItem = async (data) => {
+        setOpenedModal(data.id)
+        props.form.setFieldsValue(data)
+    }
+
+    const handleEdit = e => {
+        e.preventDefault();
+        props.form.validateFields((err, values) => {
+            if (!err) {
+                updateBodyparts(openedModal, values)
+                    .then(data => {
+                        if (data.status === 0) {
+                            message.success(data.message)
+                            getBodypartsData().then(() => props.form.resetFields())
+                            setOpenedModal(null)
                         } else message.error(data.message)
                     })
                     .catch(err => {

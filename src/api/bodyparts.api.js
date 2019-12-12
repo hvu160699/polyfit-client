@@ -28,10 +28,10 @@ export function createNewBodyparts(values) {
     })
 }
 
-export function updateBodyparts(values) {
+export function updateBodyparts(id, values) {
     return new Promise((resolve, reject) => {
         callApi(linkAPI.UPDATE_BODYPARTS(), "PUT", {
-            id: values.id,
+            id: id,
             title: values.title,
             image_url: values.image_url,
         })

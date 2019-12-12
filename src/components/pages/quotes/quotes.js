@@ -81,6 +81,11 @@ const QuotesForm = (props) => {
         });
     }
 
+    // const showDetailItem = async (data) => {
+    //     setOpenedModal(data.id)
+    //     props.form.setFieldsValue(data)
+    // }
+
     return (
         <React.Fragment>
             <div className="container">

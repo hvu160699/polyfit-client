@@ -28,13 +28,12 @@ export function createNewIngredients(values) {
     })
 }
 
-export function updateIngredients(values) {
+export function updateIngredients(id, values) {
     return new Promise((resolve, reject) => {
         callApi(linkAPI.UPDATE_INGREDIENTS(), "PUT", {
-            id: values.id,
+            id: id,
             title: values.title,
-            price: values.price,
-            unit: values.unit,
+            image_url: values.image_url,
         })
             .then(data => {
                 resolve(data)

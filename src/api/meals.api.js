@@ -29,12 +29,12 @@ export function createNewMeals(values) {
     })
 }
 
-export function updateMeals(values) {
+export function updateMeals(id, values) {
     return new Promise((resolve, reject) => {
         callApi(linkAPI.UPDATE_MEALS(), "PUT", {
-            id: values.id,
+            id: id,
             title: values.title,
-            id_diets: values.id_diets,
+            polyfitDietId: values.id_diets,
         })
             .then(data => {
                 resolve(data)

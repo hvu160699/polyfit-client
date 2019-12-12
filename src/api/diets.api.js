@@ -30,10 +30,10 @@ export function createNewDiets(values) {
     })
 }
 
-export function updateDiets(values) {
+export function updateDiets(id, values) {
     return new Promise((resolve, reject) => {
         callApi(linkAPI.UPDATE_DIETS(), "PUT", {
-            id: values.id,
+            id: id,
             title: values.title,
             description: values.description,
             image_url: values.image_url,

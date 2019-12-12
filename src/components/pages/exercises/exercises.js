@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Form, Input, Button, Select, Table, Divider, Popconfirm, message, InputNumber } from 'antd'
+import { Form, Input, Button, Select, Table, Divider, Popconfirm, message, InputNumber, Modal } from 'antd'
 import { getAllLevel } from '../../../api/level.api';
-import { getAllExercises, deleteExercises, createNewExercises } from '../../../api/exercises.api';
+import { getAllExercises, deleteExercises, createNewExercises, updateExercises } from '../../../api/exercises.api';
 import { getAllBodyparts } from '../../../api/bodyparts.api';
 const { Option } = Select;
 const { TextArea } = Input;
@@ -11,6 +11,7 @@ const ExercisesForm = (props) => {
     const [exerData, setExerData] = useState([])
     const [levelData, setLevelData] = useState([])
     const [bodypartsData, setBodypartsData] = useState([])
+    const [openedModal, setOpenedModal] = useState(false)
 
     const { getFieldDecorator } = props.form
 
@@ -130,8 +131,152 @@ const ExercisesForm = (props) => {
             title: 'Action',
             key: 'action',
             render: (row) => (
-                <span>
-                    <a>Edit</a>
+                <span style={{ color: "#4287f5" }}>
+                    <a onClick={() => showDetailItem(row)}>Edit</a>
+
+                    <Modal
+                        key="editModal"
+                        title="Edit item"
+                        centered
+                        visible={openedModal === row.id}
+                        onOk={e => handleEdit(e)}
+                        onCancel={() => setOpenedModal(null)}
+                    >
+                        <Form onSubmit={handleEdit}>
+                            <div className="row">
+                                <div className="col-sm-6">
+                                    <Form.Item label="Title">
+                                        {getFieldDecorator('title', {
+                                        })(
+                                            <Input
+                                                size="large"
+                                                placeholder="Title"
+                                            />,
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-6">
+                                    <Form.Item label="Introduction">
+                                        {getFieldDecorator('introduction', {
+                                        })(
+                                            <Input
+                                                size="large"
+                                                placeholder="Introduction"
+                                            />,
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-6">
+                                    <Form.Item label="Content">
+                                        {getFieldDecorator('content', {
+                                        })(
+                                            <TextArea
+                                                rows={4}
+                                                autoSize={true}
+                                                placeholder="Content"
+                                            />,
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-6">
+                                    <Form.Item label="Tips">
+                                        {getFieldDecorator('tips', {
+                                        })(
+                                            <TextArea
+                                                rows={4}
+                                                autoSize={true}
+                                                placeholder="Tips"
+                                            />,
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-6">
+                                    <Form.Item label="Sets">
+                                        {getFieldDecorator('sets', {
+                                        })(
+                                            <InputNumber
+                                                size="large"
+                                                placeholder="Sets"
+                                            />,
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-6">
+                                    <Form.Item label="Reps">
+                                        {getFieldDecorator('reps', {
+                                        })(
+                                            <InputNumber
+                                                size="large"
+                                                placeholder="Reps"
+                                            />,
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-6">
+                                    <Form.Item label="Rest">
+                                        {getFieldDecorator('rest', {
+                                        })(
+                                            <InputNumber
+                                                width={"100%"}
+                                                size="large"
+                                                placeholder="Rest"
+                                            />,
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-6">
+                                    <Form.Item label="Video url">
+                                        {getFieldDecorator('video_url', {
+                                        })(
+                                            <Input
+                                                size="large"
+                                                placeholder="Video url"
+                                            />,
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-6">
+                                    <Form.Item label="Image url">
+                                        {getFieldDecorator('image_url', {
+                                        })(
+                                            <Input
+                                                size="large"
+                                                placeholder="Image url"
+                                            />,
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-6">
+                                    <Form.Item label="ID Level">
+                                        {getFieldDecorator('id_level', {
+                                        })(
+                                            <Select size="large">
+                                                {levelData.map((element, key) => {
+                                                    // console.log(element)
+                                                    return <Option key={key} value={element.id}>{element.title}</Option>
+                                                })}
+                                            </Select>
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-6">
+                                    <Form.Item label="ID Bodyparts">
+                                        {getFieldDecorator('bodypartsArr', {
+                                        })(
+                                            <Select mode="multiple" size="large">
+                                                {bodypartsData.map((element, key) => {
+                                                    // console.log(element)
+                                                    return <Option key={key} value={element.id}>{element.title}</Option>
+                                                })}
+                                            </Select>
+                                        )}
+                                    </Form.Item>
+                                </div>
+
+                            </div>
+                        </Form>
+                    </Modal>
+
                     <Divider type="vertical" />
                     <Popconfirm title="Sure to delete?" onConfirm={() => deleteItem(row.id)}>
                         <a>Delete</a>
@@ -141,17 +286,42 @@ const ExercisesForm = (props) => {
         },
     ];
 
+    const showDetailItem = async (data) => {
+        setOpenedModal(data.id)
+        props.form.setFieldsValue(data)
+    }
+
     const handleSubmit = e => {
         e.preventDefault();
         props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 createNewExercises(values)
                     .then(data => {
-                        console.log(values.bodypartsArr)
                         if (data.status === 0) {
                             message.success(data.message)
                             getExercisesData().then(() => props.form.resetFields())
 
+                        } else message.error(data.message)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    });
+            }
+        });
+    }
+
+
+
+    const handleEdit = e => {
+        e.preventDefault()
+        props.form.validateFieldsAndScroll((err, values) => {
+            if (!err) {
+                updateExercises(openedModal, values)
+                    .then(data => {
+                        if (data.status === 0) {
+                            message.success(data.message)
+                            getExercisesData().then(() => props.form.resetFields())
+                            setOpenedModal(null)
                         } else message.error(data.message)
                     })
                     .catch(err => {
@@ -320,6 +490,7 @@ const ExercisesForm = (props) => {
                     <div className="col-sm">
                         {exerData &&
                             <Table
+                                key={exerData.id}
                                 width={"100%"}
                                 expandedRowRender={record => (
                                     <div>

@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react'
-import { Form, Input, message, Button, Table, Divider, Popconfirm } from 'antd'
-import { getAllLevel, createNewLevel, deleteLevel } from '../../../api/level.api'
+import React, { useState, useEffect, createRef } from 'react'
+import { Form, Input, message, Button, Table, Divider, Popconfirm, Upload, Modal } from 'antd'
+import { getAllLevel, createNewLevel, deleteLevel, updateLevel, getLevelById } from '../../../api/level.api'
 
 const LevelForm = (props) => {
 
     const { getFieldDecorator } = props.form
     const [levelData, setLevelData] = useState([])
+    const [openedModal, setOpenedModal] = useState(false)
+
+    const formRef = createRef(null)
 
     useEffect(() => {
         getLevelData()
@@ -37,8 +40,58 @@ const LevelForm = (props) => {
             title: 'Action',
             key: 'action',
             render: (row) => (
-                <span>
-                    <a>Edit</a>
+                <span style={{ color: "#4287f5" }}>
+                    <a onClick={() => showDetailItem(row)}>Edit</a>
+                    <Modal
+                        key="editModal"
+                        title="Edit item"
+                        centered
+                        visible={openedModal === row.id}
+                        onOk={e => handleEdit(e)}
+                        onCancel={() => setOpenedModal(null)}
+                    >
+                        <Form onSubmit={handleEdit}>
+                            <div className="row">
+                                <div className="col-sm-6">
+                                    <Form.Item label="Title">
+                                        {getFieldDecorator('title', {
+                                            rules: [],
+                                        })(
+                                            <Input
+                                                id="title"
+                                                size="large"
+                                                placeholder="Title"
+                                            />,
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-6">
+                                    <Form.Item label="Image">
+                                        {getFieldDecorator('image', {
+                                            rules: [],
+                                        })(
+                                            <Input
+                                                size="large"
+                                                placeholder="image"
+                                            />,
+                                        )}
+                                    </Form.Item>
+                                </div>
+                                <div className="col-sm-6">
+                                    <Form.Item label="Description">
+                                        {getFieldDecorator('description', {
+                                            rules: [],
+                                        })(
+                                            <Input
+                                                size="large"
+                                                placeholder="Description"
+                                            />,
+                                        )}
+                                    </Form.Item>
+                                </div>
+                            </div>
+                        </Form>
+                    </Modal>
                     <Divider type="vertical" />
                     <Popconfirm title="Sure to delete?" onConfirm={() => deleteItem(row.id)}>
                         <a>Delete</a>
@@ -47,6 +100,11 @@ const LevelForm = (props) => {
             ),
         },
     ]
+
+    const showDetailItem = async (data) => {
+        setOpenedModal(data.id)
+        props.form.setFieldsValue(data)
+    }
 
     const getLevelData = async () => {
         try {
@@ -65,6 +123,25 @@ const LevelForm = (props) => {
             }
             else message.error(data.message)
         })
+    }
+
+    const handleEdit = e => {
+        e.preventDefault();
+        props.form.validateFields((err, values) => {
+            if (!err) {
+                updateLevel(openedModal, values)
+                    .then(data => {
+                        if (data.status === 0) {
+                            message.success(data.message)
+                            getLevelData().then(() => props.form.resetFields())
+                            setOpenedModal(null)
+                        } else message.error(data.message)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    });
+            }
+        });
     }
 
     const handleForm = e => {
@@ -97,6 +174,7 @@ const LevelForm = (props) => {
                                     rules: [{ required: true, message: 'Please input title!' }],
                                 })(
                                     <Input
+                                        id="title"
                                         size="large"
                                         placeholder="Title"
                                     />,
@@ -149,5 +227,4 @@ const LevelForm = (props) => {
 }
 
 const LevelPage = Form.create({ name: 'Level_form' })(LevelForm);
-
 export default LevelPage
