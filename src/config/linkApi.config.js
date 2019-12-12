@@ -1,5 +1,5 @@
-// export const HOST_STATIC = "https://poly-fitness.herokuapp.com/"
-export const HOST_STATIC = "http://localhost:3030/"
+export const HOST_STATIC = "https://poly-fitness.herokuapp.com/"
+// export const HOST_STATIC = "http://localhost:3030/"
 
 export const GET_ALL_LEVEL = () => `level/getAll`
 
